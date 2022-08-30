@@ -2,7 +2,7 @@
   "name": "up-basic-social-recovery",
   "version": "1.0.0",
   "main": "build/src/index.js",
-  "description": "Deploy and manage basic social recovery tool for Lukso Universal Profile",
+  "description": "Deploy and manage social recovery tool for Lukso Universal Profile",
   "author": {
     "name": "en0c-026",
     "url": "https://github.com/en0c-026"
@@ -24,10 +24,14 @@
     "build": "tsc",
     "lint": "eslint src --ext ts",
     "lint:fix": "eslint src --ext ts --fix",
-    "prepare" : "npm run generate-types && npm run build",
-    "prepublishOnly" : "npm test && npm run lint:fix",
-    "version" : "git add -A src",
-    "postversion" : "git push && git push --tags"
+    "doc:html": "typedoc --out build/docs --plugin",
+    "doc:json": "typedoc --json build/docs/typedoc.json",
+    "docs:generate:markdown": "typedoc --options typedoc.json",
+    "prepare": "npm run generate-types && npm run build",
+    "prepublishOnly": "npm test && npm run lint:fix",
+    "version": "git add -A src",
+    "postversion": "git push && git push --tags",
+    "debug": "rm -rf build && npm run build && npm pack"
   },
   "devDependencies": {
     "@nomicfoundation/hardhat-toolbox": "^1.0.2",
@@ -44,6 +48,8 @@
     "jest": "^28.1.3",
     "prettier": "^2.7.1",
     "ts-node": "^10.9.1",
+    "typedoc": "^0.23.11",
+    "typedoc-plugin-markdown": "^3.13.4",
     "typescript": "^4.7.4"
   },
   "dependencies": {
