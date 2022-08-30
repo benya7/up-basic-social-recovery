@@ -1,5 +1,5 @@
 {
-  "name": "up-basic-social-recovery",
+  "name": "@ryup/social-recovery-tool",
   "version": "1.0.0",
   "main": "build/src/index.js",
   "description": "Deploy and manage social recovery tool for Lukso Universal Profile",
