@@ -2,9 +2,9 @@
 ## up-basic-social-recovery
 
 ## This submission counts in two parts:
-- Typescript library: **ryup-social-recovery-tool
+- Typescript library: **ryup-social-recovery-tool**
   - Repository: [This is the library repository](https://github.com/en0c-026/up-basic-social-recovery).
-- NextJS Dapp: **RyUP - Universal Profile social recovery
+- NextJS Dapp: **RyUP - Universal Profile social recovery**
   - Repository: [https://github.com/en0c-026/ryup](https://github.com/en0c-026/ryup)
 
 
