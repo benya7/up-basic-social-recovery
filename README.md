@@ -9,5 +9,9 @@
 
 
 ## Demo Links:
-- Live Dapp: []()
-- Youtube Video: []()
+- Live Dapp: [https://ryup.vercel.app](https://ryup.vercel.app)
+- Youtube Video: [https://youtu.be/1wi7zcAYTsw](https://youtu.be/1wi7zcAYTsw)
+
+
+
+Readme in development....
