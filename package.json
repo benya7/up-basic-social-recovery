@@ -1,6 +1,6 @@
 {
-  "name": "@ryup/social-recovery-tool",
-  "version": "1.0.0",
+  "name": "up-basic-social-recovery",
+  "version": "1.0.1",
   "main": "build/src/index.js",
   "description": "Deploy and manage social recovery tool for Lukso Universal Profile",
   "author": {
@@ -28,7 +28,7 @@
     "doc:json": "typedoc --json build/docs/typedoc.json",
     "docs:generate:markdown": "typedoc --options typedoc.json",
     "prepare": "npm run generate-types && npm run build",
-    "prepublishOnly": "npm test && npm run lint:fix",
+    "prepublishOnly": "npm run lint:fix",
     "version": "git add -A src",
     "postversion": "git push && git push --tags",
     "debug": "rm -rf build && npm run build && npm pack"
