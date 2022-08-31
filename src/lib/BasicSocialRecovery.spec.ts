@@ -1,0 +1,3 @@
+describe("BasicSocialRecovery", () => {
+  return true;
+});

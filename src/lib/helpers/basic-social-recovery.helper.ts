@@ -1,19 +1,31 @@
-import ERC725 from '@erc725/erc725.js';
-import { ExternalProvider, Web3Provider } from '@ethersproject/providers';
-import { ContractTransaction, Signer } from 'ethers';
-import Web3 from 'web3';
+import ERC725 from "@erc725/erc725.js";
+import { JsonRpcProvider, Web3Provider } from "@ethersproject/providers";
+import { ContractTransaction } from "ethers";
+import Web3 from "web3";
 
-import { LSP11BasicSocialRecovery__factory, UniversalProfile__factory } from '../../';
-import { schemas } from '../constants';
+import { LSP6KeyManager__factory, UniversalProfile__factory } from "../../";
+import {
+  ERC725_ACCOUNT_INTERFACE,
+  LSP11_KEY_NAME,
+  LSP6_INTERFACE_ID,
+  schemas,
+} from "../constants";
 
-export async function getPermissionData(upAddress: string, rpcUrl: string, to: string) {
-  const erc725 = new ERC725(schemas, upAddress, new Web3.providers.HttpProvider(rpcUrl));
+export async function encodePermissionsData(
+  upAddress: string,
+  rpcUrl: string,
+  to: string
+) {
+  const provider = new Web3.providers.HttpProvider(rpcUrl);
+  const erc725 = new ERC725(schemas, upAddress, provider);
 
-  const permissionAddressList = (await erc725.getData('AddressPermissions[]')).value as string[];
+  const currentAddressPermissionsList = (
+    await erc725.getData("AddressPermissions[]")
+  ).value as string[];
 
-  const permissionData = erc725.encodeData([
+  const encodedData = erc725.encodeData([
     {
-      keyName: 'AddressPermissions:Permissions:<address>',
+      keyName: "AddressPermissions:Permissions:<address>",
       dynamicKeyParts: to,
       value: ERC725.encodePermissions({
         ADDPERMISSIONS: true,
@@ -21,15 +33,15 @@ export async function getPermissionData(upAddress: string, rpcUrl: string, to: s
       }),
     },
     {
-      keyName: 'LSP11BasicSocialRecovery',
+      keyName: "LSP11BasicSocialRecovery",
       value: to,
     },
     {
-      keyName: 'AddressPermissions[]',
-      value: [...permissionAddressList, to],
+      keyName: "AddressPermissions[]",
+      value: [...currentAddressPermissionsList, to],
     },
   ]);
-  return permissionData;
+  return encodedData;
 }
 
 export async function getReceipt(transaction: ContractTransaction) {
@@ -37,15 +49,74 @@ export async function getReceipt(transaction: ContractTransaction) {
   return receipt;
 }
 
-export async function getStaticBsrInstance(upAddress: string, providerOrSigner: ExternalProvider | Signer) {
-  let signer: Signer;
+export async function addressIsUniversalProfile(
+  address: string,
+  provider: JsonRpcProvider | Web3Provider
+) {
+  const contract = UniversalProfile__factory.connect(address, provider);
+  let _isUniversalProfile = await contract.supportsInterface(
+    ERC725_ACCOUNT_INTERFACE
+  );
 
-  if (providerOrSigner instanceof Signer) {
-    signer = providerOrSigner;
-  } else {
-    signer = new Web3Provider(providerOrSigner).getSigner();
+  if (!_isUniversalProfile) {
+    _isUniversalProfile = await contract.supportsInterface("0x63cb749b");
   }
-  const up = UniversalProfile__factory.connect(upAddress, signer);
-  const bsrAddress = await up['getData(bytes32)']('0x372626dc510c09a8871d6c9731204d9d418b49e4da4d1945e745e3cbad9fed81');
-  return LSP11BasicSocialRecovery__factory.connect(bsrAddress, signer);
+  return _isUniversalProfile;
+}
+
+export async function ownerIsKeyManager(
+  owner: string,
+  provider: JsonRpcProvider | Web3Provider
+) {
+  try {
+    const contract = LSP6KeyManager__factory.connect(owner, provider);
+    return await contract.supportsInterface(LSP6_INTERFACE_ID);
+  } catch (error) {
+    return false;
+  }
+}
+
+export function encodeExecutePayload(address: string, data: string) {
+  const universalProfile = UniversalProfile__factory.createInterface();
+  const payload = universalProfile.encodeFunctionData("execute", [
+    0,
+    address,
+    0,
+    data,
+  ]);
+  return payload;
+}
+
+export function encodeSetDataPayload(data: [string[], string[]]) {
+  const universalProfile = UniversalProfile__factory.createInterface();
+  const payload = universalProfile.encodeFunctionData(
+    "setData(bytes32[],bytes[])",
+    data
+  );
+  return payload;
+}
+
+export async function getBSRContractAddress(upAddress: string, rpcUrl: string) {
+  const httpProvider = new Web3.providers.HttpProvider(rpcUrl);
+  const erc725 = new ERC725(schemas, upAddress, httpProvider);
+  const decodedData = await erc725.getData(LSP11_KEY_NAME);
+  return decodedData.value as string;
+}
+
+export async function callerIsAllowed(
+  upAddress: string,
+  caller: string,
+  rpcUrl: string
+) {
+  const httpProvider = new Web3.providers.HttpProvider(rpcUrl);
+  const erc725 = new ERC725(schemas, upAddress, httpProvider);
+  const encodedPermisssions = await erc725.getData({
+    keyName: "AddressPermissions:Permissions:<address>",
+    dynamicKeyParts: caller,
+  });
+  const decodedPermissions = erc725.decodePermissions(
+    encodedPermisssions.value as string
+  );
+
+  return decodedPermissions["CALL"];
 }
