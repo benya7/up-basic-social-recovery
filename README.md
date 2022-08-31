@@ -21,7 +21,7 @@
 
 ## Usage
 ```bash
-npm install ryup-basic-social-recovery
+npm install ryup-social-recovery-tool
 ```
 
 ## Example
@@ -29,6 +29,8 @@ npm install ryup-basic-social-recovery
 **`Example`**
 
 ```javascript
+import { BasicSocialRecovery } from "ryup-social-recovery-tool";
+
 const provider = new JsonRpcProvider(RPC_URL);
 const signer = new Signer(PRIVATE_KEY, RPC_URL);
 const basicSocialRecovery = new BasicSocialRecovery(UP_ADDRESS, provider, signer);
