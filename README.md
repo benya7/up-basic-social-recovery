@@ -3,8 +3,8 @@
 
 ## Participant
 
-Name: **Lucas Jovanovich | en0c-026**
-Email: **bitup.games@gmail.com**
+- Name: **Lucas Jovanovich | en0c-026**
+- Email: **bitup.games@gmail.com**
 
 
 ## This submission counts in two parts:
