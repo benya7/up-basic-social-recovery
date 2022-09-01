@@ -32,7 +32,7 @@ npm install ryup-social-recovery-tool
 import { BasicSocialRecovery } from "ryup-social-recovery-tool";
 
 const provider = new JsonRpcProvider(RPC_URL);
-const signer = new Signer(PRIVATE_KEY, RPC_URL);
+const signer = new Wallet(PRIVATE_KEY, RPC_URL);
 const basicSocialRecovery = new BasicSocialRecovery(UP_ADDRESS, provider, signer);
 
 // From the browser
